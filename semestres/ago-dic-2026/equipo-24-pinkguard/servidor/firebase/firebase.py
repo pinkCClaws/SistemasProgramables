@@ -14,7 +14,7 @@ firebase_admin.initialize_app(cred, {
 ref_alertas = db.reference('Modelo')
 
 # 2. Funciones del Broker MQTT
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties=None):
     print("[MQTT] ¡Conectado al broker local Mosquitto!")
     client.subscribe("pinkguard/estado")
     print("[MQTT] Escuchando alertas de PinkGuard en el tópico 'pinkguard/estado'...")
@@ -51,10 +51,15 @@ def on_message(client, userdata, msg):
         print(f"[ERROR] Hubo un problema procesando o subiendo el mensaje: {e}")
 
 # 4. Inicialización del puente local
-client = mqtt.Client()
+# 4. Inicialización del puente local
+try:
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+except AttributeError:
+    client = mqtt.Client()
+
 client.on_connect = on_connect
 client.on_message = on_message
 
 print("Iniciando Puente Mosquitto -> Firebase...")
-client.connect("localhost", 1883, 60) # Se conecta al Mosquitto de tu PC
-client.loop_forever() # Mantiene el script vivo escuchando
+client.connect("localhost", 1883, 60)
+client.loop_forever()

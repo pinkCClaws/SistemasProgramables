@@ -1,3 +1,14 @@
+# ============================================
+# Proyecto:  Pink Ward Sentinel
+# Archivo:   Modelo.py
+# Objetivo:  Representar el modelo de datos
+# Equipo:    Montoya Chávez Ángel Eduardo
+#            Rios López Jeremhy Damián
+#            Torres Romero Yóscar Yemmen
+# Materia:   Sistemas Programables — ISC TecNM León
+# Semestre:  ago-dic-2026
+# ============================================
+
 class Modelo:
     def __init__(self):
         # --- ESTADOS DE LOS SENSORES

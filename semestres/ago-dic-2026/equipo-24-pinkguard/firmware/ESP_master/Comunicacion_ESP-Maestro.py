@@ -1,3 +1,14 @@
+# ============================================
+# Proyecto:  Pink Ward Sentinel
+# Archivo:   Comunicacion_ESP-Maestro.py
+# Objetivo:  Enviar un pulso digital vía GPIO para activar el ESP32 secundario (Cámara)
+# Equipo:    Montoya Chávez Ángel Eduardo
+#            Rios López Jeremhy Damián
+#            Torres Romero Yóscar Yemmen
+# Materia:   Sistemas Programables — ISC TecNM León
+# Semestre:  ago-dic-2026
+# ============================================
+
 from machine import Pin
 import time
 

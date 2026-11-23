@@ -1,3 +1,14 @@
+# ============================================
+# Proyecto:  Pink Ward Sentinel
+# Archivo:   HAL.py
+# Objetivo:  Actuar como la capa de abstracción de hardware (HAL) del sistema
+# Equipo:    Montoya Chávez Ángel Eduardo
+#            Rios López Jeremhy Damián
+#            Torres Romero Yóscar Yemmen
+# Materia:   Sistemas Programables — ISC TecNM León
+# Semestre:  ago-dic-2026
+# ============================================
+
 from machine import Pin, PWM, ADC
 import time
 from dfplayer import DFPlayer

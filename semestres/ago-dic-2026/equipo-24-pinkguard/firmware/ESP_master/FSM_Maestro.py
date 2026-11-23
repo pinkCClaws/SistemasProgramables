@@ -1,9 +1,24 @@
+# ============================================
+# Proyecto:  Pink Ward Sentinel
+# Archivo:   FSM_Maestro.py
+# Objetivo:  Implementar la Máquina de Estados Finitos (FSM) que controla la lógica central del sistema
+# Equipo:    Montoya Chávez Ángel Eduardo
+#            Rios López Jeremhy Damián
+#            Torres Romero Yóscar Yemmen
+# Materia:   Sistemas Programables — ISC TecNM León
+# Semestre:  ago-dic-2026
+# ============================================
+
 import time
 
 class FSM_Maestro:
     ESTADO_BOOTEO = "BOOTEO"
     ESTADO_ESPERA = "ESPERA"
     ESTADO_ALERTA = "ALERTA"
+    
+    # Rango ADC ESP32 (0 - 4095). 
+    # Lógica invertida: más oscuridad = lectura más alta
+    UMBRAL_NOCHE = 2500 
 
     def __init__(self, hal, mqtt_manager, modelo):
         self.hal = hal
@@ -46,10 +61,15 @@ class FSM_Maestro:
             self.modelo.ldr_valor = self.hal.leer_ldr()
             print(f"[ALERTA-INIT] Lectura LDR capturada: {self.modelo.ldr_valor}")
             
-            # 2. Relé: Activar físicamente
-            self.modelo.rele_estado = True
-            self.hal.activar_rele(True)
-            print("[ALERTA-INIT] Relé Activado.")
+            # 2. Relé: Activar físicamente SOLO si está oscuro (es de noche)
+            if self.modelo.ldr_valor > self.UMBRAL_NOCHE:
+                self.modelo.rele_estado = True
+                self.hal.activar_rele(True)
+                print(f"[ALERTA-INIT] Poca luz ({self.modelo.ldr_valor} > {self.UMBRAL_NOCHE}) -> Relé Activado.")
+            else:
+                self.modelo.rele_estado = False
+                self.hal.activar_rele(False)
+                print(f"[ALERTA-INIT] Suficiente luz ({self.modelo.ldr_valor} <= {self.UMBRAL_NOCHE}) -> Relé Apagado.")
             
             # 3. Bocina: Iniciar
             self.modelo.bocina_estado = True
@@ -97,7 +117,7 @@ class FSM_Maestro:
             self.rf_ultimo_estado = lectura_rf
 
         elif self.estado_actual == self.ESTADO_ALERTA:
-        # --- TAREA 1: RF (SALIR DE LA ALERTA) ---
+            # --- TAREA 1: RF (SALIR DE LA ALERTA) ---
             lectura_rf = self.hal.leer_rf()
             self.modelo.rf_presionado = lectura_rf
             
@@ -117,10 +137,8 @@ class FSM_Maestro:
                 self.tiempo_ultimo_audio = time.time()
 
             # --- TAREA 3 (INDEPENDIENTE): MONITOREO CONSTANTE DEL PIR ---
-            # Leemos el PIR en cada ciclo de la FSM
             pir_actual = self.hal.leer_pir()
             
-            # Si detecta movimiento (1) y antes estaba en reposo (0)
             if pir_actual == 1 and self.modelo.pir_valor == 0:
                 self.modelo.pir_valor = 1
                 angulo_actual = self.angulos_servo[self.indice_angulo]
@@ -144,7 +162,6 @@ class FSM_Maestro:
                     self.indice_angulo = (self.indice_angulo + 1) % len(self.angulos_servo)
                     self.modelo.servo_angulo = self.angulos_servo[self.indice_angulo]
                     
-                    # El servo se mueve de forma fluida sin importar el PIR
                     self.hal.mover_servo(self.modelo.servo_angulo)
                     
                     self.fase_escaneo = "MOVIENDO"

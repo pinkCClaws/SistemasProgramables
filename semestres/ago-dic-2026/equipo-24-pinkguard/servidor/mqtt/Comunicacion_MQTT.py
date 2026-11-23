@@ -1,3 +1,14 @@
+# ============================================
+# Proyecto:  Pink Ward Sentinel
+# Archivo:   Comunicacion_MQTT.py
+# Objetivo:  Establecer la conexión Wi-Fi y la publicación de datos hacia el broker MQTT
+# Equipo:    Montoya Chávez Ángel Eduardo
+#            Rios López Jeremhy Damián
+#            Torres Romero Yóscar Yemmen
+# Materia:   Sistemas Programables — ISC TecNM León
+# Semestre:  ago-dic-2026
+# ============================================
+
 import network
 from umqtt.simple import MQTTClient
 import time
